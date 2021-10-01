@@ -1,0 +1,46 @@
+data:
+  name: stanfordcars
+  num_workers: 8
+  batch_size: 60
+  data_dir: ./data/stanfordcars
+  mask_dir: mask
+  images_dir: img
+  render_path: rendering_stanfordcars.pkl
+  embedding_dir: rendering_stanfordcars.npy
+  pix_size: 224
+  view_num: 12
+  training_json: StanfordCars_train.json
+  test_json: StanfordCars_test.json
+  # val_json: pix3d_val.json
+  tau: 0.1
+  # margin: 0.2
+
+viz:
+  log_freq: 50
+  viz_freq: 100
+  save_freq: 2000
+  val_freq: 100
+
+trainer:
+  epochs: 500
+  seed: 3104
+  lr: ‘1e-4’  #  use bs*1e-5/8
+  beta1: 0.5
+  beta2: 0.999
+  momentum: 0.9  # for SGD
+  weight_decay: 0.
+  scheduler: ’linear‘
+
+
+models:
+  z_dim: 128
+  pre_trained_path: './pre_trained/stanford.pt'
+  pre_train_resnet_root: './pretrained_resnet'
+  save_root: './'
+
+
+setting:
+  is_training: True
+  is_aug: True # for data augmentation, flip, random crop...
+  is_color: True # for data augmentation: color transfer
+  is_from_scratch: True
