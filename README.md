@@ -62,7 +62,7 @@ python RetrievalNet_test.py --config ./configs/pix3d.yaml --mode full
 # for shapenet test
 python RetrievalNet_test.py --config ./configs/pix3d.yaml --mode shapenet
 
-# pay to attention
+# pay attention to:
 # model_std_bin128 and model_std_ptc10k_npy are not uploaded.
 # For model_std_ptc10k_npy, we randomly sample 10k points from the mesh by python igl package.
 # For model_std_bin128, please refer to https://www.patrickmin.com/viewvox/ for more information.
