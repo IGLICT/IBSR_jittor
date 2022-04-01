@@ -1,35 +1,21 @@
 data:
   name: compcars
   num_workers: 8
-  batch_size: 60
-  data_dir: ./data/compcars
+  batch_size: 30 
+  root_dir: ./data
   mask_dir: mask
   images_dir: img
   render_path: rendering_compcars.pkl
-  embedding_dir: rendering_compcars.npy
   pix_size: 224
   view_num: 12
   training_json: CompCars_train.json
   test_json: CompCars_test.json
-  # val_json: pix3d_val.json
   tau: 0.1
-  # margin: 0.2
 
-viz:
-  log_freq: 50
-  viz_freq: 100
-  save_freq: 2000
-  val_freq: 100
 
 trainer:
-  epochs: 500
+  epochs: 400
   seed: 3104
-  lr: ‘1e-4’  #  use bs*1e-5/8
-  beta1: 0.5
-  beta2: 0.999
-  momentum: 0.9  # for SGD
-  weight_decay: 0.
-  scheduler: ’linear‘
 
 
 models:

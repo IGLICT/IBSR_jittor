@@ -17,6 +17,59 @@ This repository provides **data**, **pre-trained models** and **code**.
 
 
 
+## Installation
+```zsh
+# create anoconda environment
+## please make sure that python version >= 3.7 (required by jittor)
+conda create -n ibsr_jittor python=3.7
+conda activate ibsr_jittor
+
+# jittor installation
+python3.7 -m pip install jittor
+## testing jittor
+### if errors appear, you can follow the instructions of jittor to fix them.
+python3.7 -m jittor.test.test_example
+# testing for cudnn
+python3.7 -m jittor.test.test_cudnn_op
+
+# other pickages
+pip install pyyaml
+pip install scikit-learn
+pip install matplotlib
+pip install scikit-image
+pip install argparse
+```
+
+
+
+## How to use
+
+```zsh
+# download pre-trained models, data and official ResNet pre-trained models from this links:
+https://1drv.ms/u/s!Ams-YJGtFnP7mTQOACYHco1s2gXE?e=c87UnV
+
+# put the unzip folder pre_trained, pretrained_resnet, data under IBSR_jittor/code
+cd IBSR_jittor/code
+
+# all codes are test under a single Nvidia RTX3090, Ubuntu 20.04
+# training
+python RetrievalNet.py --config ./configs/pix3d.yaml
+
+# testing
+python RetrievalNet_test.py --config ./configs/pix3d.yaml --mode simple
+# for full test
+python RetrievalNet_test.py --config ./configs/pix3d.yaml --mode full
+# for shapenet test
+python RetrievalNet_test.py --config ./configs/pix3d.yaml --mode shapenet
+
+# pay to attention
+# model_std_bin128 and model_std_ptc10k_npy are not uploaded.
+# For model_std_ptc10k_npy, we randomly sample 10k points from the mesh by python igl package.
+# For model_std_bin128, please refer to https://www.patrickmin.com/viewvox/ for more information.
+```
+
+
+
 
 ## Citations
 ```
@@ -31,6 +84,6 @@ This repository provides **data**, **pre-trained models** and **code**.
 
 
 ## Updates
-
+- [Apr 1, 2021] Pre-trained Models, Data and revised Code released. 
 - [Oct 1, 2021] Preliminary version of Data and Code released. For more code and data, coming soon. Please follow our updates.
 

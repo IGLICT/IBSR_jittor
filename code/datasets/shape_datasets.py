@@ -11,7 +11,7 @@ class ShapeDataset(Dataset):
     def __init__(self, cfg):
         super(ShapeDataset, self).__init__()
 
-        render_path = os.path.join(cfg.data.data_dir, cfg.data.render_path)
+        render_path = os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.render_path)
         # self.dicts = np.load(render_path, allow_pickle=True).item()
         with open(render_path, 'rb') as f:
             self.dicts = pickle.load(f)

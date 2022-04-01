@@ -16,12 +16,12 @@ class QueryDataset(Dataset):
         super(QueryDataset, self).__init__()
         self.is_training = cfg.setting.is_training
         if cfg.setting.is_training:
-            self.json_path = os.path.join(cfg.data.data_dir, cfg.data.training_json)
+            self.json_path = os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.training_json)
         else:
-            self.json_path = os.path.join(cfg.data.data_dir, cfg.data.test_json)
+            self.json_path = os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.test_json)
  
         self.json_dict = self.read_json(self.json_path)
-        self.data_dir = cfg.data.data_dir
+        self.data_dir = os.path.join(cfg.data.root_dir, cfg.data.name)
 
         crop_scale = (0.85, 0.95)
         self.aug = cfg.setting.is_aug
@@ -31,7 +31,7 @@ class QueryDataset(Dataset):
         self.view_num = cfg.data.view_num
         self.mask_dir = cfg.data.mask_dir
 
-        render_path = os.path.join(cfg.data.data_dir, cfg.data.render_path)
+        render_path = os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.render_path)
         with open(render_path, 'rb') as f:
             self.dicts = pickle.load(f)
 
@@ -114,9 +114,9 @@ class QueryDataset(Dataset):
 class ImageDataset(Dataset):
     def __init__(self, cfg):
         super(ImageDataset, self).__init__()
-        self.json_path = os.path.join(cfg.data.data_dir, cfg.data.test_json)
+        self.json_path = os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.test_json)
         self.json_dict = self.read_json(self.json_path)
-        self.data_dir = cfg.data.data_dir
+        self.data_dir = os.path.join(cfg.data.root_dir, cfg.data.name)
 
         self.query_transform = transform.Compose([transform.ToTensor(), transform.ImageNormalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         self.mask_transform = transform.Compose([transform.ToTensor(), transform.ImageNormalize((0.5, ), (0.5, ))])

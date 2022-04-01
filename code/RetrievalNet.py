@@ -12,6 +12,7 @@ import jittor as jt
 from jittor import nn
 
 
+
 # from tensorboardX import SummaryWriter
 
 import warnings
@@ -30,10 +31,10 @@ class Retrieval(object):
     def __init__(self, config):
         self.cfg =config
         self.retrieval_net = RetrievalNet(self.cfg)
-        lr = float(self.cfg.trainer.lr)
-        beta1 = float(self.cfg.trainer.beta1)
+        lr = 0.00005
+        beta1 = 0.5
+        beta2 = 0.999
 
-        beta2 = float(self.cfg.trainer.beta2)
         self.opt = nn.Adam(self.retrieval_net.parameters(), lr=lr, betas=(beta1, beta2))
 
         self.normal_tf = transform.ImageNormalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
@@ -217,7 +218,7 @@ class Retrieval(object):
             self.it = it
             self.epoch = epoch
             # self.testing() 
-            if epoch % 10 == 0:
+            if epoch % 10 == 0 or epoch > 50:
                 self.testing()
  
 
@@ -253,7 +254,7 @@ class Retrieval(object):
         shape_ebd = jt.concat(shape_ebd_list, dim=0) # num, 12, dim
 
         # test image
-        json_dict = read_json(os.path.join(cfg.data.data_dir, cfg.data.test_json))
+        json_dict = read_json(os.path.join(cfg.data.root_dir, cfg.data.name, cfg.data.test_json))
         json_lenth = len(json_dict)
         query_transformer = transform.Compose([transform.ToTensor(), transform.ImageNormalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         mask_transformer = transform.Compose([transform.ToTensor(), transform.ImageNormalize((0.5, ), (0.5, ))])
@@ -266,8 +267,8 @@ class Retrieval(object):
             pbar = tqdm.tqdm(range(json_lenth))
             for i in pbar:
                 info = json_dict[i]
-                query_img = query_transformer(Image.open(os.path.join(cfg.data.data_dir, info['img'])))
-                mask_img = mask_transformer(Image.open(os.path.join(cfg.data.data_dir, info['mask'])))
+                query_img = query_transformer(Image.open(os.path.join(cfg.data.root_dir, cfg.data.name, info['img'])))
+                mask_img = mask_transformer(Image.open(os.path.join(cfg.data.root_dir, cfg.data.name, info['mask'])))
 
                 query = jt.concat((query_img, mask_img), dim=0)
                 # query = query.unsqueeze(dim=0)
@@ -334,7 +335,7 @@ class Retrieval(object):
         if final_acc > self.best_acc:
             self.best_acc = final_acc
             paths_list=self.cfg.models.pre_trained_path.split('/')[:-1]
-            paths_list.append(self.cfg.data.name+'_best.pt')
+            paths_list.append(self.cfg.data.name+'.pt')
             paths = '/'.join(paths_list)
             self.saving(paths=paths)
         
@@ -342,6 +343,7 @@ class Retrieval(object):
 
 
     def loading(self, paths=None):
+        # print(self.retrieval_net.state_dict().keys())
         cfg = self.cfg
         if paths == None or not os.path.exists(paths):
             # init   
@@ -395,9 +397,16 @@ class Retrieval(object):
         jt.save(self.retrieval_net.state_dict(), save_path)
 
 
-if __name__ == '__main__':    
-    with open('./configs/pix3d.yaml', 'r') as f:
-        config = yaml.load(f)
+if __name__ == '__main__':   
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config", type=str, default="./configs/compcars.yaml", help="Path to (.yaml) config file."
+    )
+
+    configargs = parser.parse_args()
+
+    with open(configargs.config, 'r', encoding="utf-8") as f:
+        config = yaml.safe_load(f)
     def dict2namespace(config):
         namespace = argparse.Namespace()
         for key, value in config.items():
@@ -409,6 +418,9 @@ if __name__ == '__main__':
         return namespace
     config = dict2namespace(config)
 
-    retrieval = Retrieval(config)
-    retrieval.training()
+    Task = Retrieval(config)
+    # Task.testing()
+    Task.training()
+
+
 
